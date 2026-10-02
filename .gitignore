@@ -35,3 +35,6 @@ ui-debug.log
 # Never commit a service-account private key
 **/serviceAccount*.json
 **/*-firebase-adminsdk-*.json
+
+# Claude Code per-user settings
+.claude/settings.local.json
