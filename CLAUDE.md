@@ -44,6 +44,16 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";"
   (add `,storage` when storage.rules changed). Firebase CLI is already
   authenticated; `.firebaserc` points at `aff-exteriors`.
 
+### Version control & location
+
+- The project lives at `C:\Users\mjjg6\Desktop\Aff-Exteriors-Database` (local
+  Desktop, **not OneDrive** -- the owner does not want it on OneDrive).
+- Git, backed up to the private GitHub repo `jacxd64/aff-exteriors-database`
+  (`main`). Commit and push after each finished feature. `.env.local` is
+  git-ignored and must never be committed.
+- **Firebase is on the Blaze plan** (required for Cloud Storage). A
+  `402 Payment Required` from Storage means the plan lapsed.
+
 ### Local mode vs Firebase mode
 
 - `.env.local` (git-ignored) holds the `VITE_FIREBASE_*` keys. When present, the
