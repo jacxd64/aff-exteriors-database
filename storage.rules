@@ -1,0 +1,41 @@
+rules_version = '2';
+
+// ===========================================================================
+// Aff Exteriors — Cloud Storage security rules
+//
+// Same membership gate as Firestore: you must have a users/{uid} profile to
+// read or upload. Files live under jobs/<jobId>/photos and jobs/<jobId>/documents.
+// Photos must be images; documents allow PDF / Word / text / images. 50 MB cap.
+// ===========================================================================
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function hasProfile() {
+      return request.auth != null
+        && firestore.exists(/databases/(default)/documents/users/$(request.auth.uid));
+    }
+    function underLimit() {
+      return request.resource.size < 50 * 1024 * 1024;
+    }
+
+    match /jobs/{jobId}/photos/{allPaths=**} {
+      allow read: if hasProfile();
+      allow write: if hasProfile() && underLimit()
+        && request.resource.contentType.matches('image/.*');
+    }
+
+    match /jobs/{jobId}/documents/{allPaths=**} {
+      allow read: if hasProfile();
+      allow write: if hasProfile() && underLimit()
+        && request.resource.contentType.matches(
+          'image/.*|application/pdf|application/msword|application/vnd.openxmlformats-officedocument.*|text/.*'
+        );
+    }
+
+    // Everything else is denied.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

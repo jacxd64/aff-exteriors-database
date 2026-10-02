@@ -1,0 +1,5 @@
+{
+  "comment": "All current queries sort by a single field (jobs by updatedAt; timeline/notes by at) and filter client-side, so no composite indexes are required yet. If a future query combines a where() with an orderBy(), Firestore will log an error in the console with a one-click link to create the needed index — add it here and run `firebase deploy --only firestore:indexes`.",
+  "indexes": [],
+  "fieldOverrides": []
+}

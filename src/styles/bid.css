@@ -1,0 +1,321 @@
+/* ==========================================================================
+   Patio cover bid builder. Field-tool density: big touch targets, tabular
+   figures, a total pinned to the bottom of the screen.
+   ========================================================================== */
+
+/* Clear the fixed total bar (and the mobile bottom nav underneath it). */
+.bid-page { padding-bottom: 110px; }
+@media (max-width: 899px) {
+  .bid-page { padding-bottom: calc(110px + var(--bottomnav-height)); }
+}
+
+.bid-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  margin-bottom: var(--space-4);
+  background: var(--color-neutral-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+.bid-tabs button {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 6px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-text-muted);
+  font: 600 var(--text-sm)/1 var(--font-sans);
+  cursor: pointer;
+}
+.bid-tabs button[aria-selected='true'] {
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-sm);
+}
+
+.bid-card { padding: var(--space-4); margin-bottom: var(--space-3); }
+.bid-h2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.bid-h2 span {
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--color-text-subtle);
+}
+
+.bid-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.bid-disc-row { margin-top: var(--space-3); }
+
+/* --- segmented choices (panel, beam) --- */
+.bid-seg { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-3); }
+.bid-seg button {
+  flex: 1 1 96px;
+  min-width: 0;
+  min-height: var(--touch-target);
+  padding: 10px 8px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  font: 600 var(--text-sm)/1.2 var(--font-sans);
+  text-align: center;
+  cursor: pointer;
+}
+.bid-seg button span {
+  display: block;
+  margin-top: 3px;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--color-text-subtle);
+  font-variant-numeric: tabular-nums;
+}
+.bid-seg button[aria-pressed='true'] {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-text);
+}
+
+/* --- steppers --- */
+.bid-step {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: 6px 8px 6px 12px;
+  margin-bottom: var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-2);
+}
+.bid-step.is-on { border-color: var(--color-primary); }
+.bid-step-name { min-width: 0; flex: 1; }
+.bid-step-name b { display: block; font-size: var(--text-sm); font-weight: 600; }
+.bid-step-name i {
+  display: block;
+  font-style: normal;
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
+  font-variant-numeric: tabular-nums;
+}
+.bid-step-ct { display: flex; align-items: center; gap: 2px; flex: none; }
+.bid-step-ct button {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: 600 1.2rem/1 var(--font-sans);
+  cursor: pointer;
+}
+.bid-step-ct input {
+  width: 48px;
+  padding: 8px 2px;
+  border: 0;
+  background: transparent;
+  color: var(--color-text);
+  font: 500 var(--text-base)/1 var(--font-sans);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+.bid-step-toggle {
+  min-height: 36px;
+  padding: 0 18px;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: 600 var(--text-sm)/1 var(--font-sans);
+  cursor: pointer;
+}
+.bid-step-toggle[aria-pressed='true'] { border-color: var(--color-primary); background: var(--color-primary-soft); }
+
+/* --- derived structure readout --- */
+.bid-readout {
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-2);
+}
+.bid-readout-bad { border-color: var(--color-danger); color: var(--color-danger); }
+.bid-row { display: flex; justify-content: space-between; gap: var(--space-3); padding: 3px 0; font-size: var(--text-sm); }
+.bid-row > span:last-child { font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+.bid-row small { color: var(--color-text-subtle); font-weight: 400; }
+.bid-warn { color: var(--color-warning); }
+.bid-included { color: var(--color-success); font-weight: 600; }
+
+.bid-sched {
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px dashed var(--color-border-strong);
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: var(--text-xs);
+  line-height: 1.75;
+  color: var(--color-text-muted);
+  overflow-x: auto;
+}
+.bid-sched b { color: var(--color-text); font-weight: 600; }
+
+/* --- alternate layouts --- */
+.bid-alts { display: flex; flex-direction: column; gap: 6px; margin-top: var(--space-3); }
+.bid-altlbl {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-subtle);
+}
+.bid-alt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+.bid-alt[aria-pressed='true'] { border-color: var(--color-primary); background: var(--color-primary-soft); }
+.bid-alt-l { min-width: 0; font-size: var(--text-sm); font-weight: 600; }
+.bid-alt-l i {
+  display: block;
+  font-style: normal;
+  font-weight: 400;
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
+  font-variant-numeric: tabular-nums;
+}
+.bid-alt-p { white-space: nowrap; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* --- line items --- */
+.bid-items { width: 100%; border-collapse: collapse; font-size: var(--text-sm); }
+.bid-items td { padding: 7px 0; border-bottom: 1px solid var(--color-border); vertical-align: baseline; }
+.bid-items td:last-child {
+  padding-left: var(--space-3);
+  text-align: right;
+  white-space: nowrap;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.bid-items td i {
+  display: block;
+  font-style: normal;
+  font-weight: 400;
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
+}
+.bid-items tr.bid-sum td {
+  border-bottom: 0;
+  border-top: 2px solid var(--color-text);
+  padding-top: 10px;
+  font-size: var(--text-xl);
+  font-weight: 700;
+}
+.bid-items tr.bid-disc td:last-child { color: var(--color-danger); }
+.bid-noreason { color: var(--color-danger); font-weight: 600; }
+
+.bid-cust h3 { font-size: var(--text-2xl); margin: 0 0 2px; }
+.bid-cust .page-subtitle { margin-bottom: var(--space-4); }
+.bid-fine { margin: var(--space-4) 0 0; font-size: var(--text-xs); color: var(--color-text-subtle); }
+
+/* --- price sheet --- */
+.bid-note {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+  padding: 10px 12px;
+  margin-bottom: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-warning);
+  border-radius: var(--radius-sm);
+  background: var(--color-warning-bg);
+  color: var(--color-text);
+  font-size: var(--text-xs);
+}
+.bid-note svg { flex: none; margin-top: 1px; color: var(--color-warning); }
+.bid-psrow {
+  display: grid;
+  grid-template-columns: 1fr 104px 92px;
+  gap: var(--space-2);
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+.bid-psrow:last-child { border-bottom: 0; }
+.bid-psname { min-width: 0; font-size: var(--text-sm); }
+.bid-psname i { display: block; font-style: normal; font-size: var(--text-xs); color: var(--color-text-subtle); }
+.bid-psrow .input { padding: 8px; font-variant-numeric: tabular-nums; }
+.bid-psbasis { padding: 8px 4px; font-size: var(--text-xs); }
+.bid-psder { font-size: var(--text-xs); color: var(--color-text-subtle); font-variant-numeric: tabular-nums; }
+.bid-psgrp { margin: var(--space-3) 0 2px; font-size: var(--text-base); font-weight: 700; }
+.bid-psgrp span { font-size: var(--text-xs); font-weight: 500; color: var(--color-text-subtle); }
+.bid-btnrow { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-3); }
+
+@media (max-width: 480px) {
+  .bid-psrow { grid-template-columns: 1fr 80px 76px; gap: 6px; }
+}
+
+/* --- pinned total --- */
+.bid-totalbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: var(--z-sticky);
+  padding: 12px var(--space-4);
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  background: var(--color-text);
+  color: var(--color-primary-contrast);
+}
+@media (max-width: 899px) {
+  /* sit above the mobile bottom nav */
+  .bid-totalbar { bottom: var(--bottomnav-height); padding-bottom: 12px; }
+}
+@media (min-width: 900px) {
+  .bid-totalbar { left: var(--sidebar-width); }
+}
+.bid-totalbar-in {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  max-width: var(--content-max);
+  margin-inline: auto;
+}
+.bid-totalbar-lbl {
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+.bid-totalbar-amt {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.bid-totalbar-side {
+  text-align: right;
+  font-size: var(--text-xs);
+  line-height: 1.4;
+  opacity: 0.82;
+  font-variant-numeric: tabular-nums;
+}

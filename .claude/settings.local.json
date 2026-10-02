@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Write-Output \"node: $\\(try { node --version } catch { 'MISSING' }\\)\"; Write-Output \"npm: $\\(try { npm --version } catch { 'MISSING' }\\)\"; Write-Output \"firebase: $\\(try { firebase --version } catch { 'MISSING' }\\)\")",
+      "PowerShell(winget install OpenJS.NodeJS.LTS --silent --accept-package-agreements --accept-source-agreements; Write-Output \"=== EXIT: $LASTEXITCODE ===\")",
+      "PowerShell($env:Path = [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"User\"\\); npm run build)",
+      "mcp__Claude_Preview__preview_start",
+      "PowerShell($c = Get-NetTCPConnection -LocalPort 5173 -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { $c.OwningProcess | Select-Object -Unique | ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue } ; \"stopped $\\($c.OwningProcess -join ','\\)\" } else { \"nothing on 5173\" })",
+      "PowerShell(Rename-Item -Path \".env.local\" -NewName \".env.local.off\")",
+      "PowerShell(\"disabled\")",
+      "Bash(node -e 'console.log\\('\\\\''docx version:'\\\\'', require\\('\\\\''/c/Users/mjjg6/AppData/Local/Temp/claude/C--Users-mjjg6-OneDrive-Desktop-Aff-Exteriors-Database/f9360f19-be7b-4781-b14c-acee1bebd9d8/scratchpad/node_modules/docx/package.json'\\\\''\\).version\\)')",
+      "Bash(npm install *)",
+      "Bash(npm config *)",
+      "Read(//c/Users/mjjg6/AppData/Local/Temp/claude/C--Users-mjjg6-OneDrive-Desktop-Aff-Exteriors-Database/f9360f19-be7b-4781-b14c-acee1bebd9d8/scratchpad/**)",
+      "Read(//c/Users/mjjg6/AppData/Local/Temp/claude/C--Users-mjjg6-OneDrive-Desktop-Aff-Exteriors-Database/f9360f19-be7b-4781-b14c-acee1bebd9d8/scratchpad/node_modules/**)",
+      "Bash(node /c/Users/mjjg6/AppData/Local/Temp/claude/C--Users-mjjg6-OneDrive-Desktop-Aff-Exteriors-Database/f9360f19-be7b-4781-b14c-acee1bebd9d8/scratchpad/gen-roof.js '/c/Users/mjjg6/AppData/Local/Temp/claude/C--Users-mjjg6-OneDrive-Desktop-Aff-Exteriors-Database/f9360f19-be7b-4781-b14c-acee1bebd9d8/scratchpad/Roof Work Order.docx')"
+    ]
+  }
+}

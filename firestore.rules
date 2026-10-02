@@ -1,0 +1,124 @@
+rules_version = '2';
+
+// ===========================================================================
+// Aff Exteriors — Firestore security rules
+//
+// Access model (mirrors src/utils/permissions.js):
+//   - Authentication alone is NOT enough. With Google sign-in anyone can
+//     authenticate, so the real gate is membership: you must have a
+//     users/{uid} document with a role before you can read or write anything.
+//   - admin           : full access, manages team members, only role that deletes jobs
+//   - office          : create/edit jobs, materials, schedule, installers, notes
+//   - sales           : create/edit jobs, notes, photos, measurements
+//   - pm              : edit jobs, materials, schedule, notes, photos
+//   - viewer          : read-only
+//
+// The very first admin's users/{uid} doc is created from the Firebase console
+// (or any Admin SDK tool), which bypasses these rules — see FIREBASE_SETUP.md.
+// ===========================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function profilePath() {
+      return /databases/$(database)/documents/users/$(request.auth.uid);
+    }
+    function hasProfile() {
+      return isSignedIn() && exists(profilePath());
+    }
+    function role() {
+      return get(profilePath()).data.role;
+    }
+    function isAdmin() {
+      return hasProfile() && role() == 'admin';
+    }
+    // Any non-view-only team member.
+    function isStaff() {
+      return hasProfile() && role() in ['admin', 'office', 'sales', 'pm'];
+    }
+    function canCreateJob() {
+      return hasProfile() && role() in ['admin', 'office', 'sales'];
+    }
+    function canEditJob() {
+      return hasProfile() && role() in ['admin', 'office', 'sales', 'pm'];
+    }
+
+    // --- Jobs + subcollections ---------------------------------------------
+    match /jobs/{jobId} {
+      allow read:   if hasProfile();        // every team member can view jobs
+      allow create: if canCreateJob();
+      allow update: if canEditJob();
+      allow delete: if isAdmin();
+
+      // Timeline is append-only history written as a side effect of edits.
+      match /timeline/{entryId} {
+        allow read:          if hasProfile();
+        allow create:        if isStaff();
+        allow update, delete: if isAdmin();
+      }
+
+      // Notes
+      match /notes/{noteId} {
+        allow read:   if hasProfile();
+        allow create: if isStaff();
+        allow update: if isStaff();
+        allow delete: if isStaff();
+      }
+
+      // Photo + document metadata (the files themselves live in Storage).
+      match /photos/{photoId} {
+        allow read:   if hasProfile();
+        allow create: if isStaff();
+        allow update: if isStaff();
+        allow delete: if isStaff();
+      }
+      match /documents/{docId} {
+        allow read:   if hasProfile();
+        allow create: if isStaff();
+        allow update: if isStaff();
+        allow delete: if isStaff();
+      }
+    }
+
+    // --- Installers / crews -------------------------------------------------
+    match /installers/{installerId} {
+      allow read:  if hasProfile();
+      allow write: if hasProfile() && role() in ['admin', 'office'];
+    }
+
+    // --- Appointments (calendar) -------------------------------------------
+    match /appointments/{apptId} {
+      allow read:   if hasProfile();
+      allow create: if isStaff();
+      allow update: if isStaff();
+      allow delete: if isStaff();
+    }
+
+    // --- Public photo share links ------------------------------------------
+    // A share doc holds only already-public photo URLs + a title/note. Anyone
+    // with the unguessable token can GET one (powers the public /share page),
+    // but the collection can't be LISTed except by staff — so links can't be
+    // enumerated or harvested.
+    match /shares/{shareId} {
+      allow get:    if true;
+      allow list:   if isStaff();
+      allow create: if isStaff();
+      allow update: if isStaff();
+      allow delete: if isStaff();
+    }
+
+    // --- Users (team membership + roles) ------------------------------------
+    match /users/{userId} {
+      // You can always read your own profile (needed to resolve your role);
+      // admins can read everyone for team management.
+      allow read:  if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      // Only admins grant/curate roles.
+      allow write: if isAdmin();
+    }
+
+    // Anything not matched above is denied by default.
+  }
+}
