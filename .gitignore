@@ -38,3 +38,6 @@ ui-debug.log
 
 # Claude Code per-user settings
 .claude/settings.local.json
+
+# Cloud Functions
+functions/node_modules
