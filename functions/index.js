@@ -26,7 +26,7 @@ async function getShell() {
   return shell.html;
 }
 
-export const sharePreview = onRequest({ region: 'us-central1', memory: '256MiB' }, async (req, res) => {
+export const sharePreview = onRequest({ region: 'us-central1', memory: '256MiB', invoker: 'public' }, async (req, res) => {
   const token = (req.path.split('/share/')[1] || '').split('/')[0];
   let share = null;
   try {

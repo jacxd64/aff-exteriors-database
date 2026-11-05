@@ -53,6 +53,12 @@ $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";"
   git-ignored and must never be committed.
 - **Firebase is on the Blaze plan** (required for Cloud Storage). A
   `402 Payment Required` from Storage means the plan lapsed.
+- **Cloud Functions** (`functions/`, Node 22, 2nd gen): `sharePreview` serves
+  `/share/**` (Hosting rewrite) with the share's title as Open Graph tags so
+  text-message link previews show it. It must keep `invoker: 'public'` or every
+  share link returns 403. Deploy with `firebase deploy --only functions`;
+  `functions/package.json` must not have a UTF-8 BOM (PowerShell `Set-Content`
+  adds one and breaks the cloud build).
 
 ### Local mode vs Firebase mode
 
